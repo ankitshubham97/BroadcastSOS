@@ -103,7 +103,7 @@ class ShakeService : Service(), SensorEventListener {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        val locationGPS: Location? =locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val locationGPS: Location? = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         if (locationGPS != null) {
             val lat: Double = locationGPS.latitude
             val longi: Double = locationGPS.longitude
