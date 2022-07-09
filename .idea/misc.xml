@@ -4,13 +4,17 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/default_pager_dot.xml" value="0.2985" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.3205" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/selected_pager_dot.xml" value="0.2985" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/tab_pager_selector.xml" value="0.2985" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/activity_auth_twitter.xml" value="0.14947916666666666" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/activity_main.xml" value="0.17395833333333333" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/activity_screen_slide.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_dashboard.xml" value="0.14947916666666666" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_notifications.xml" value="0.19583333333333333" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_screen_slide_page.xml" value="0.358695652173913" />
-        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/xml/root_preferences.xml" value="0.14947916666666666" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/menu/bottom_nav_menu.xml" value="0.14947916666666666" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/xml/root_preferences.xml" value="0.25" />
       </map>
     </option>
   </component>

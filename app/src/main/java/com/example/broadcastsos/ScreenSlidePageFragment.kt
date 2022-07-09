@@ -31,7 +31,8 @@ class ScreenSlidePageFragment : Fragment() {
             changeColor(getStringArray("INTRO_STRING_OBJECT")!![2])
             binding.doneButton.visibility = getInt("DONE_BUTTON_VISIBILITY");
             binding.doneButton.setOnClickListener {
-                val intent = Intent(activity, AuthTwitterActivity::class.java)
+                val intent = Intent(activity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             }
         }
