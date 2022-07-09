@@ -1,19 +1,25 @@
 package com.example.broadcastsos.services
 
 //import android.support.v4.app.NotificationCompat
+import android.Manifest
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import okhttp3.*
 import java.io.IOException
 import java.time.Instant
@@ -61,6 +67,7 @@ class ShakeService : Service(), SensorEventListener {
 
         if (mAccel > 11) {
             Log.i("TAG","Shaken!!!!")
+            getLocation()
             val request = Request.Builder()
                 .url("https://enqpcnmttxmgb.x.pipedream.net/")
                 .post(
@@ -77,4 +84,34 @@ class ShakeService : Service(), SensorEventListener {
         }
     }
 
+    fun getLocation() {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        val locationGPS: Location? =locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (locationGPS != null) {
+            val lat: Double = locationGPS.latitude
+            val longi: Double = locationGPS.longitude
+            val latitude = lat.toString()
+            val longitude = longi.toString()
+            Log.i("loc","Your Location: \nLatitude: $latitude\nLongitude: $longitude")
+        } else {
+            Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
