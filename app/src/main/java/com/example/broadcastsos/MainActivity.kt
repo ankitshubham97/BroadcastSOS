@@ -51,12 +51,15 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            // TODO: Handle the situation when GPS is disabled
+        
+        if ((ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED)) {
+            Toast.makeText(this@MainActivity, "Permission already granted", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, AuthTwitterActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         } else {
             askedLocationPermission()
         }
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
@@ -74,6 +77,9 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                 }
+                val intent = Intent(this, AuthTwitterActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
                 return
             }
         }
