@@ -15,12 +15,19 @@ import kotlinx.coroutines.*
 class Handler(private val view: IAuthTwitter) : INetworkAccess {
     private var coroutineScope: CoroutineScope? = null
 
-    private val errorHandler = CoroutineExceptionHandler { context, error ->
+    private val errorHandlerForFetchRequestTokenAndAuthUrl = CoroutineExceptionHandler { context, error ->
         logOut("Async Exception")
         coroutineScope?.launch(Dispatchers.Main) {
             logOut("Async Exception Result")
-            print(error.message)
-            view.updateAuthUrl(error.localizedMessage ?: "")
+            view.errorOnSavingOauthTokenOrUpdatingAuthUrl()
+        }
+    }
+
+    private val errorHandlerForVerifyToken = CoroutineExceptionHandler { context, error ->
+        logOut("Async Exception")
+        coroutineScope?.launch(Dispatchers.Main) {
+            logOut("Async Exception Result")
+            view.errorOnVerifyingToken()
         }
     }
 
@@ -28,7 +35,7 @@ class Handler(private val view: IAuthTwitter) : INetworkAccess {
     override fun verifyToken(oauthToken: String, oauthTokenSecret: String, oauthVerifier: String) {
         coroutineScope?.cancel()
         coroutineScope = MainScope()
-        coroutineScope?.launch(errorHandler) {
+        coroutineScope?.launch(errorHandlerForVerifyToken) {
             try {
                 val defer = async(Dispatchers.IO) {
                     val service: OAuth10aService = ServiceBuilder("Aybi4VfPWujGV6RBAope2Y23k")
@@ -57,10 +64,10 @@ class Handler(private val view: IAuthTwitter) : INetworkAccess {
         }
     }
 
-    override fun fetchData() {
+    override fun fetchRequestTokenAndAuthUrl() {
         coroutineScope?.cancel()
         coroutineScope = MainScope()
-        coroutineScope?.launch(errorHandler) {
+        coroutineScope?.launch(errorHandlerForFetchRequestTokenAndAuthUrl) {
             try {
                 val defer = async(Dispatchers.IO) {
                     logOut("Async Fetch Started")
@@ -81,8 +88,7 @@ class Handler(private val view: IAuthTwitter) : INetworkAccess {
                 }
                 when (val result = defer.await()) {
                     is Network.Result.NetworkResult -> {
-                        view.updateAuthUrl(result.authUrl)
-                        view.saveOauthToken(result.requestToken, result.requestTokenSecret)
+                        view.saveOauthTokenAndUpdateAuthUrl(result.requestToken, result.requestTokenSecret, result.authUrl)
                         logOut("Async Post Success Result")
                     }
                 }

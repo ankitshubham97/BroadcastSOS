@@ -85,7 +85,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         val otpEditText = binding.otpEditText
         loginButton.visibility = View.VISIBLE
         loginButton.text = "Step 1: Connect Twitter"
-        getOauthToken()
+        getOauthTokenAndSetAuthUrl()
 
 
         verifyButton.visibility = View.VISIBLE
@@ -107,17 +107,14 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         super.onDestroyView()
         _binding = null
     }
-    private fun getOauthToken() {
-        networkHandler.fetchData()
+    private fun getOauthTokenAndSetAuthUrl() {
+        networkHandler.fetchRequestTokenAndAuthUrl()
     }
 
-    override fun updateAuthUrl(authUrl: String) {
+    override fun saveOauthTokenAndUpdateAuthUrl(oauthToken: String, oauthTokenSecret: String, authUrl: String) {
         binding.loginButton.setOnClickListener() {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)))
         }
-    }
-
-    override fun saveOauthToken(oauthToken: String, oauthTokenSecret: String) {
         with (sharedPref.edit()) {
             putString("oauthToken", oauthToken)
             putString("oauthTokenSecret", oauthTokenSecret)
@@ -136,5 +133,17 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_connected_round)
         isTwitterConnected.value = true
         Toast.makeText(activity, "Connected to Twitter!", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun errorOnVerifyingToken() {
+        sharedPref.edit().clear().apply()
+        isTwitterConnected.value = false
+        Toast.makeText(activity, "Error verifying OTP", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun errorOnSavingOauthTokenOrUpdatingAuthUrl() {
+        sharedPref.edit().clear().apply()
+        isTwitterConnected.value = false
+        Toast.makeText(activity, "Error connecting to Twitter", Toast.LENGTH_SHORT).show()
     }
 }
