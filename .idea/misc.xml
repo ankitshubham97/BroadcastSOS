@@ -5,15 +5,17 @@
       <map>
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2175" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/default_pager_dot.xml" value="0.2985" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/green_dot.xml" value="0.3675" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.3205" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2175" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.2175" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/red_dot.xml" value="0.3675" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/selected_pager_dot.xml" value="0.2985" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/drawable/tab_pager_selector.xml" value="0.2985" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/activity_auth_twitter.xml" value="0.14947916666666666" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/activity_main.xml" value="0.17395833333333333" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/activity_screen_slide.xml" value="0.358695652173913" />
-        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_dashboard.xml" value="0.14947916666666666" />
+        <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_dashboard.xml" value="0.33" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_notifications.xml" value="0.19583333333333333" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_screen_slide_page.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Ankit/AndroidStudioProjects/BroadcastSOS/app/src/main/res/layout/fragment_settings.xml" value="0.18802083333333333" />

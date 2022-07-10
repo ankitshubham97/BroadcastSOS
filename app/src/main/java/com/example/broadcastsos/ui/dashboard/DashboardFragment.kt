@@ -9,14 +9,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentDashboardBinding
 import com.example.broadcastsos.interfaces.IAuthTwitter
 import com.example.broadcastsos.network.Handler
 import com.example.broadcastsos.services.ShakeService
+
 
 class DashboardFragment : Fragment(), IAuthTwitter {
 
@@ -27,6 +29,9 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     private val binding get() = _binding!!
     private val networkHandler = Handler(this)
     private lateinit var sharedPref: SharedPreferences;
+    private var isTwitterConnected = MutableLiveData(false)
+
+    private val constext = getContext()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,25 +42,65 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         val root: View = binding.root
         val activity = requireActivity()
         sharedPref = activity.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-
-        binding.verifyButton.setOnClickListener {
-            Toast.makeText(activity, "Verifying...", Toast.LENGTH_SHORT).show()
-            networkHandler.verifyToken(sharedPref.getString("oauthToken", "").toString(), sharedPref.getString("oauthTokenSecret", "").toString(), binding.otpEditText.text.toString())
-        }
-
-        binding.showPrefsButton.setOnClickListener {
-            sharedPref.all.forEach {
-                Log.d("AuthTwitterActivity", "${it.key} : ${it.value}")
+        isTwitterConnected.observe(viewLifecycleOwner, object : Observer<Boolean?> {
+            override fun onChanged(aBoolean: Boolean?) {
+                Log.d("isTwitterConnected","$aBoolean")
+                if (isTwitterConnected.value == true) {
+                    paintWhenTwitterConnects()
+                } else {
+                    paintWhenTwitterDisconnects()
+                }
             }
-
-        }
-        getOauthToken()
+        })
 
         val intent = Intent(activity, ShakeService::class.java)
-        //Start Service
         activity.startService(intent)
 
         return root
+    }
+
+    fun paintWhenTwitterConnects() {
+        val loginButton = binding.loginButton
+        val verifyButton = binding.verifyButton
+        val otpEditText = binding.otpEditText
+        val ivDashboardIcon = binding.ivDashboardIcon
+        loginButton.visibility = View.VISIBLE
+        loginButton.text = "Disconnect Twitter"
+        loginButton.setOnClickListener(View.OnClickListener {
+            Toast.makeText(context, "Disconnecting Twitter...", Toast.LENGTH_SHORT).show()
+            sharedPref.edit().clear().apply()
+            Toast.makeText(context, "Twitter disconnected", Toast.LENGTH_SHORT).show()
+            isTwitterConnected.value = false
+        })
+
+        verifyButton.visibility = View.GONE
+        otpEditText.text.clear()
+        otpEditText.visibility = View.GONE
+        ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_connected_round)
+    }
+
+    fun paintWhenTwitterDisconnects() {
+        val loginButton = binding.loginButton
+        val verifyButton = binding.verifyButton
+        val otpEditText = binding.otpEditText
+        loginButton.visibility = View.VISIBLE
+        loginButton.text = "Step 1: Connect Twitter"
+        getOauthToken()
+
+
+        verifyButton.visibility = View.VISIBLE
+        verifyButton.text = "Step 2: Verify OTP"
+        verifyButton.setOnClickListener(View.OnClickListener {
+            val otp = otpEditText.text.toString()
+            if (otp.isEmpty()) {
+                Toast.makeText(context, "Please enter OTP", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Verifying OTP...", Toast.LENGTH_SHORT).show()
+                networkHandler.verifyToken(sharedPref.getString("oauthToken", "").toString(), sharedPref.getString("oauthTokenSecret", "").toString(), otp)
+            }
+        })
+        otpEditText.visibility = View.VISIBLE
+
     }
 
     override fun onDestroyView() {
@@ -78,6 +123,8 @@ class DashboardFragment : Fragment(), IAuthTwitter {
             putString("oauthTokenSecret", oauthTokenSecret)
             apply()
         }
+        Log.i("DashboardFragment", "oauthToken: $oauthToken")
+        Log.i("DashboardFragment", "oauthTokenSecret: $oauthTokenSecret")
     }
 
     override fun saveAccessToken(accessToken: String, accessTokenSecret: String) {
@@ -86,5 +133,8 @@ class DashboardFragment : Fragment(), IAuthTwitter {
             putString("accessTokenSecret", accessTokenSecret)
             apply()
         }
+        binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_connected_round)
+        isTwitterConnected.value = true
+        Toast.makeText(activity, "Connected to Twitter!", Toast.LENGTH_SHORT).show()
     }
 }
