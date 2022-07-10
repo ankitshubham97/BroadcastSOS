@@ -46,9 +46,9 @@ class DashboardFragment : Fragment(), IAuthTwitter {
             override fun onChanged(aBoolean: Boolean?) {
                 Log.d("isTwitterConnected","$aBoolean")
                 if (isTwitterConnected.value == true) {
-                    paintWhenTwitterConnects()
+                    paintAfterTwitterConnects()
                 } else {
-                    paintWhenTwitterDisconnects()
+                    paintAfterTwitterDisconnects()
                 }
             }
         })
@@ -59,27 +59,26 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         return root
     }
 
-    fun paintWhenTwitterConnects() {
+    fun paintAfterTwitterConnects() {
         val loginButton = binding.loginButton
         val verifyButton = binding.verifyButton
         val otpEditText = binding.otpEditText
-        val ivDashboardIcon = binding.ivDashboardIcon
         loginButton.visibility = View.VISIBLE
         loginButton.text = "Disconnect Twitter"
         loginButton.setOnClickListener(View.OnClickListener {
             Toast.makeText(context, "Disconnecting Twitter...", Toast.LENGTH_SHORT).show()
             sharedPref.edit().clear().apply()
-            Toast.makeText(context, "Twitter disconnected", Toast.LENGTH_SHORT).show()
+            binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
             isTwitterConnected.value = false
+            Toast.makeText(context, "Twitter disconnected", Toast.LENGTH_SHORT).show()
         })
 
         verifyButton.visibility = View.GONE
         otpEditText.text.clear()
         otpEditText.visibility = View.GONE
-        ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_connected_round)
     }
 
-    fun paintWhenTwitterDisconnects() {
+    fun paintAfterTwitterDisconnects() {
         val loginButton = binding.loginButton
         val verifyButton = binding.verifyButton
         val otpEditText = binding.otpEditText
@@ -136,14 +135,12 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     }
 
     override fun errorOnVerifyingToken() {
-        sharedPref.edit().clear().apply()
-        isTwitterConnected.value = false
+        binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
         Toast.makeText(activity, "Error verifying OTP", Toast.LENGTH_SHORT).show()
     }
 
     override fun errorOnSavingOauthTokenOrUpdatingAuthUrl() {
-        sharedPref.edit().clear().apply()
-        isTwitterConnected.value = false
+        binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
         Toast.makeText(activity, "Error connecting to Twitter", Toast.LENGTH_SHORT).show()
     }
 }
