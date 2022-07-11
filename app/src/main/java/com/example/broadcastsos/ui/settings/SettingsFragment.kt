@@ -3,6 +3,7 @@ package com.example.broadcastsos.ui.settings
 //import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
 import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentSettingsBinding
+import com.example.broadcastsos.services.twitter.rest.MainView
+import com.example.broadcastsos.services.twitter.rest.Network
+import com.example.broadcastsos.services.twitter.rest.NetworkAccessCoroutinesAsyncAwait
 
 
 class SettingsFragment : Fragment() {
@@ -46,9 +50,18 @@ class SettingsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    class SettingsFragment : PreferenceFragmentCompat() {
+    class SettingsFragment : PreferenceFragmentCompat(), MainView {
+        private val networkAccessCoroutinesAsyncAwait = NetworkAccessCoroutinesAsyncAwait(this)
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            networkAccessCoroutinesAsyncAwait.fetchData(Network.httpUrlBuilder, "Boy")
+        }
+
+        override fun updateScreen(result: String) {
+            Log.i("updateScreen", result)
         }
     }
+
+
 }
