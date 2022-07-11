@@ -10,12 +10,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentDashboardBinding
 import com.example.broadcastsos.interfaces.IAuthTwitter
+import com.example.broadcastsos.models.MyViewModel
 import com.example.broadcastsos.network.Handler
 import com.example.broadcastsos.services.ShakeService
 
@@ -30,6 +33,8 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     private val networkHandler = Handler(this)
     private lateinit var sharedPref: SharedPreferences;
     private var isTwitterConnected = MutableLiveData(false)
+    private val viewModel: MyViewModel by viewModels()
+
 
 
     override fun onCreateView(
@@ -60,8 +65,12 @@ class DashboardFragment : Fragment(), IAuthTwitter {
             binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
         }
 
-        val intent = Intent(activity, ShakeService::class.java)
-        activity.startService(intent)
+        initObservers()
+
+        viewModel.startCounter()
+
+//        val intent = Intent(activity, ShakeService::class.java)
+//        activity.startService(intent)
 
         return root
     }
@@ -149,5 +158,13 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     override fun errorOnSavingOauthTokenOrUpdatingAuthUrl() {
         binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
         Toast.makeText(activity, "Error connecting to Twitter", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun initObservers() {
+        Log.i("TAG", "registering Observers: ViewModel? $viewModel")
+        viewModel.currentCounter.observe(viewLifecycleOwner) { value ->
+            Log.i("TAG", "inserting value")
+            binding?.otpEditText.hint = value.toString()
+        }
     }
 }
