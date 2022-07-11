@@ -32,7 +32,7 @@
 <!--            android:enabled="true"-->
 <!--            android:exported="true" />-->
         <service
-            android:name=".services.ShakeService"
+            android:name=".services.background.ShakeService"
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"
@@ -41,7 +41,7 @@
             android:launchMode="singleInstance" />
 
         <receiver
-            android:name=".services.RestarterBroadcastReceiver"
+            android:name=".services.background.RestarterBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="StartMyServiceAtBootReceiver">

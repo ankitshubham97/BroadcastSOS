@@ -17,7 +17,7 @@ import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentDashboardBinding
 import com.example.broadcastsos.interfaces.IAuthTwitter
 import com.example.broadcastsos.network.Handler
-import com.example.broadcastsos.services.RestarterBroadcastReceiver
+import com.example.broadcastsos.services.background.RestarterBroadcastReceiver
 
 
 class DashboardFragment : Fragment(), IAuthTwitter {

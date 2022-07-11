@@ -2,7 +2,7 @@
  * Copyright (c) Code Developed by Prof. Fabio Ciravegna
  * All rights Reserved
  */
-package com.example.broadcastsos.services
+package com.example.broadcastsos.services.background
 
 import android.Manifest
 import android.app.Service
@@ -26,6 +26,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
+import com.example.broadcastsos.services.twitter.TwitterService
 
 class ShakeService : Service(), SensorEventListener {
     private var wakeLock: WakeLock? = null

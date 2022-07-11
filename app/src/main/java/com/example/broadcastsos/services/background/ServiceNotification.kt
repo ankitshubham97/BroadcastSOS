@@ -3,7 +3,7 @@
  * All rights Reserved
  */
 
-package com.example.broadcastsos.services
+package com.example.broadcastsos.services.background
 
 import android.app.Notification
 import android.app.NotificationChannel

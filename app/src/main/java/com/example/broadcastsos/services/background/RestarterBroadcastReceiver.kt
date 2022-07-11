@@ -1,4 +1,4 @@
-package com.example.broadcastsos.services
+package com.example.broadcastsos.services.background
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -17,7 +17,7 @@ class RestarterBroadcastReceiver : BroadcastReceiver() {
         fun startWorker(context: Context) {
             val constraints = Constraints.Builder()
                 .build()
-            val request = OneTimeWorkRequestBuilder<MainCoroutineWorker>()
+            val request = OneTimeWorkRequestBuilder<ShakeCoroutineWorker>()
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setConstraints(constraints)
                 .build()

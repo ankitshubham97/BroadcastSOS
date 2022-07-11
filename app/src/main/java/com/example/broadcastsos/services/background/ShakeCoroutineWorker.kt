@@ -1,4 +1,4 @@
-package com.example.broadcastsos.services
+package com.example.broadcastsos.services.background
 
 
 import android.content.Context
@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-class MainCoroutineWorker(private val context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
+class ShakeCoroutineWorker(private val context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
     companion object {
         private var TAG = this::class.simpleName
