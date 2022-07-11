@@ -41,6 +41,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         val root: View = binding.root
         val activity = requireActivity()
         sharedPref = activity.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+
         isTwitterConnected.observe(viewLifecycleOwner, object : Observer<Boolean?> {
             override fun onChanged(aBoolean: Boolean?) {
                 Log.d("isTwitterConnected","$aBoolean")
@@ -51,6 +52,13 @@ class DashboardFragment : Fragment(), IAuthTwitter {
                 }
             }
         })
+
+        isTwitterConnected.value = sharedPref.getString("accessToken", "") != "" && sharedPref.getString("accessTokenSecret", "") != ""
+        if (isTwitterConnected.value == true) {
+            binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_connected_round)
+        } else {
+            binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
+        }
 
         val intent = Intent(activity, ShakeService::class.java)
         activity.startService(intent)
