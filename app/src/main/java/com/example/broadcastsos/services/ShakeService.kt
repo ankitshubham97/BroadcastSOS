@@ -6,7 +6,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -20,11 +19,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import okhttp3.*
-import java.io.IOException
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 
 class ShakeService : Service(), SensorEventListener {
@@ -34,9 +28,6 @@ class ShakeService : Service(), SensorEventListener {
     private var mAccel: Float = 0.toFloat() // acceleration apart from gravity
     private var mAccelCurrent: Float = 0.toFloat() // current acceleration including gravity
     private var mAccelLast: Float = 0.toFloat() // last acceleration including gravity
-
-    private val client = OkHttpClient()
-
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -68,19 +59,6 @@ class ShakeService : Service(), SensorEventListener {
         if (mAccel > 11) {
             Log.i("TAG","Shaken!!!!")
             getLocation()
-            val request = Request.Builder()
-                .url("https://enqpcnmttxmgb.x.pipedream.net/")
-                .post(
-                    FormBody.Builder()
-                        .add("from", "app")
-                        .add("time", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
-                        .build())
-                .build()
-
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {}
-                override fun onResponse(call: Call, response: Response) = println(response.body()?.string())
-            })
         }
     }
 

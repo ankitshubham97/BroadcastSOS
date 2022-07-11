@@ -31,7 +31,6 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     private lateinit var sharedPref: SharedPreferences;
     private var isTwitterConnected = MutableLiveData(false)
 
-    private val constext = getContext()
 
     override fun onCreateView(
         inflater: LayoutInflater,

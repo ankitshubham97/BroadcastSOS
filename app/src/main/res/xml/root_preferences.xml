@@ -1,34 +1,54 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory app:title="General">
 
         <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
+            app:key="settings_sos_message"
+            app:title="Your SOS message"
+            app:defaultValue="SOS: This is an auto-generated message whenever I am in danger. Please help me!"
             app:useSimpleSummaryProvider="true" />
 
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
+        <CheckBoxPreference
+            app:key="settings_enable_sending_tweet"
+            app:title="Enable sending tweet?"
+            android:defaultValue="true"/>
+
+        <CheckBoxPreference
+            app:key="settings_enable_sending_location_in_tweet"
+            app:dependency="settings_enable_sending_tweet"
+            app:title="Sending location in tweet?"
+            android:defaultValue="true"/>
+
+        <CheckBoxPreference
+            app:key="settings_enable_sending_close_contacts_in_tweet"
+            app:dependency="settings_enable_sending_tweet"
+            app:title="Send close contacts in tweet?"
+            android:defaultValue="true"/>
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory app:title="Close Contacts">
 
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+        <ListPreference
+            app:key="settings_close_contacts"
+            app:title="Close contacts"
+            app:entries="@array/secs_entries"
+            app:entryValues="@array/secs_values"
+            app:defaultValue="0"
+            android:summary="%s"/>
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Rollback">
+
+        <ListPreference
+            app:key="settings_time_to_undo_false_alarm"
+            app:title="Time to manually undo false alarm"
+            app:entries="@array/secs_entries"
+            app:entryValues="@array/secs_values"
+            app:defaultValue="0"
+            android:summary="%s"/>
 
     </PreferenceCategory>
 
