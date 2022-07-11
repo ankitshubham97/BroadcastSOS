@@ -1,6 +1,6 @@
-package com.example.broadcastsos.network
+package com.example.broadcastsos.services.twitter.oauth.network
 
-object Network {
+object OauthNetwork {
 
     sealed class Result {
         class NetworkError(val message: String) : Result()

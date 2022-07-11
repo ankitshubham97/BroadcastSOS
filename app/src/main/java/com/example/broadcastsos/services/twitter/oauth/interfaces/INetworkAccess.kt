@@ -1,4 +1,4 @@
-package com.example.broadcastsos.interfaces
+package com.example.broadcastsos.services.twitter.oauth.interfaces
 
 
 import android.util.Log

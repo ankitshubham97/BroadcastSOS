@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.example.broadcastsos.services
+package com.example.broadcastsos.services.twitter.rest
 
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -128,7 +128,8 @@ class Oauth1SigningInterceptor(val oauthKeys: OauthKeys,
             OAUTH_SIGNATURE_METHOD,
             OAUTH_TIMESTAMP,
             OAUTH_TOKEN,
-            OAUTH_VERSION)
+            OAUTH_VERSION
+        )
     }
 }
 

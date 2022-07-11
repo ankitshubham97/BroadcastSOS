@@ -26,7 +26,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
-import com.example.broadcastsos.services.twitter.TwitterService
+import com.example.broadcastsos.services.twitter.rest.TwitterService
 
 class ShakeService : Service(), SensorEventListener {
     private var wakeLock: WakeLock? = null

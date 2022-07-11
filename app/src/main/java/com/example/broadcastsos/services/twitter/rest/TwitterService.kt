@@ -1,11 +1,9 @@
-package com.example.broadcastsos.services.twitter
+package com.example.broadcastsos.services.twitter.rest
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.broadcastsos.services.Oauth1SigningInterceptor
-import com.example.broadcastsos.services.OauthKeys
 import okhttp3.*
 import java.io.IOException
 

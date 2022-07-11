@@ -15,8 +15,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentDashboardBinding
-import com.example.broadcastsos.interfaces.IAuthTwitter
-import com.example.broadcastsos.network.Handler
+import com.example.broadcastsos.services.twitter.oauth.interfaces.IAuthTwitter
+import com.example.broadcastsos.services.twitter.oauth.network.OauthHandler
 import com.example.broadcastsos.services.background.RestarterBroadcastReceiver
 
 
@@ -27,7 +27,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val networkHandler = Handler(this)
+    private val networkHandler = OauthHandler(this)
     private lateinit var sharedPref: SharedPreferences;
     private var isTwitterConnected = MutableLiveData(false)
 

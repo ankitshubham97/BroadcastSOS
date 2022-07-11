@@ -1,8 +1,8 @@
-package com.example.broadcastsos.network
+package com.example.broadcastsos.services.twitter.oauth.network
 
 import android.util.Log
-import com.example.broadcastsos.interfaces.IAuthTwitter
-import com.example.broadcastsos.interfaces.INetworkAccess
+import com.example.broadcastsos.services.twitter.oauth.interfaces.IAuthTwitter
+import com.example.broadcastsos.services.twitter.oauth.interfaces.INetworkAccess
 import com.github.scribejava.apis.TwitterApi
 import com.github.scribejava.core.builder.ServiceBuilder
 import com.github.scribejava.core.model.OAuth1AccessToken
@@ -10,7 +10,7 @@ import com.github.scribejava.core.model.OAuth1RequestToken
 import com.github.scribejava.core.oauth.OAuth10aService
 import kotlinx.coroutines.*
 
-class Handler(private val view: IAuthTwitter) : INetworkAccess {
+class OauthHandler(private val view: IAuthTwitter) : INetworkAccess {
     private var coroutineScope: CoroutineScope? = null
 
     private val errorHandlerForFetchRequestTokenAndAuthUrl = CoroutineExceptionHandler { context, error ->
@@ -46,12 +46,12 @@ class Handler(private val view: IAuthTwitter) : INetworkAccess {
                     val oauthToken = OAuth1RequestToken(oauthToken, oauthTokenSecret);
                     val accessToken: OAuth1AccessToken = service.getAccessToken(oauthToken, oauthVerifier);
                     Log.i("accessToken", accessToken.rawResponse)
-                    Network.Result.NetworkResult2(accessToken.token , accessToken.tokenSecret ).apply {
+                    OauthNetwork.Result.NetworkResult2(accessToken.token , accessToken.tokenSecret ).apply {
                         logOut("Async Fetch Done")
                     }
                 }
                 when (val result = defer.await()) {
-                    is Network.Result.NetworkResult2 -> {
+                    is OauthNetwork.Result.NetworkResult2 -> {
                         view.saveAccessToken(result.accessToken, result.accessTokenSecret)
                         logOut("Async Post Success Result")
                     }
@@ -79,13 +79,13 @@ class Handler(private val view: IAuthTwitter) : INetworkAccess {
                     Log.i("requestToken", requestToken.tokenSecret)
                     val authURL = service.getAuthorizationUrl(requestToken)
                     Log.i("authURL", authURL)
-                    Network.Result.NetworkResult(authURL, requestToken.token, requestToken.tokenSecret).apply {
+                    OauthNetwork.Result.NetworkResult(authURL, requestToken.token, requestToken.tokenSecret).apply {
                         logOut("Async Fetch Done")
                     }
 
                 }
                 when (val result = defer.await()) {
-                    is Network.Result.NetworkResult -> {
+                    is OauthNetwork.Result.NetworkResult -> {
                         view.saveOauthTokenAndUpdateAuthUrl(result.requestToken, result.requestTokenSecret, result.authUrl)
                         logOut("Async Post Success Result")
                     }
