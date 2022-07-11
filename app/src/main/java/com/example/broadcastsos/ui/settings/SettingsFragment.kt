@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
 import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentSettingsBinding
-import com.example.broadcastsos.services.TwitterService
 
 
 class SettingsFragment : Fragment() {
@@ -20,7 +19,6 @@ class SettingsFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val twitterService: TwitterService by lazy { TwitterService() }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -38,7 +36,7 @@ class SettingsFragment : Fragment() {
 
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
-        twitterService.sendTweet(requireContext(), "Hello from the settings fragment")
+
 
         return binding.root
 

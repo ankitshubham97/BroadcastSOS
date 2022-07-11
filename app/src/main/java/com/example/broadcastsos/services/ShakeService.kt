@@ -19,6 +19,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 
 
 class ShakeService : Service(), SensorEventListener {
@@ -28,6 +29,7 @@ class ShakeService : Service(), SensorEventListener {
     private var mAccel: Float = 0.toFloat() // acceleration apart from gravity
     private var mAccelCurrent: Float = 0.toFloat() // current acceleration including gravity
     private var mAccelLast: Float = 0.toFloat() // last acceleration including gravity
+    private val twitterService: TwitterService by lazy { TwitterService() }
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -59,6 +61,7 @@ class ShakeService : Service(), SensorEventListener {
         if (mAccel > 11) {
             Log.i("TAG","Shaken!!!!")
             getLocation()
+            twitterService.sendTweet(this, "Hello from the settings fragment")
         }
     }
 
