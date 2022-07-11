@@ -23,10 +23,8 @@ class TwitterService {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun sendTweet(context: Context, tweet: String) {
-//        val nonce = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg"
         sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
         val oauthKeys = getOauthKeys(context)
-        Log.i("TwitterService", "oauthKeys: $oauthKeys")
         val oauth1 = Oauth1SigningInterceptor(oauthKeys = oauthKeys)
 
         val mediaTypeJson = MediaType.parse("application/json; charset=utf-8")
@@ -40,18 +38,7 @@ class TwitterService {
             .build()
 
         val signed = oauth1.signRequest(request)
-        Log.i("Signed", signed.header("Authorization"))
-        Log.i("Signed", signed.header("Content-Type"))
-        Log.i("Signed", signed.headers().toString())
-        // Send tweet
-//        val request = Request.Builder()
-//            .url("https://enqpcnmttxmgb.x.pipedream.net/")
-//            .post(
-//                FormBody.Builder()
-//                    .add("from", "app")
-//                    .add("time", DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
-//                    .build())
-//            .build()
+
         client.newCall(signed).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) = println(response.body()?.string())

@@ -19,7 +19,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.preference.PreferenceManager
 
 
 class ShakeService : Service(), SensorEventListener {
@@ -60,12 +60,28 @@ class ShakeService : Service(), SensorEventListener {
 
         if (mAccel > 11) {
             Log.i("TAG","Shaken!!!!")
-            getLocation()
-            twitterService.sendTweet(this, "Hello from the settings fragment")
+
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
+            val sendTweet = sharedPreferences.getBoolean("settings_enable_sending_tweet", false)
+            if (sendTweet) {
+                val defaultMsg = "SOS: This is an auto-generated message whenever I am in danger. Please help me!"
+                var msg = sharedPreferences.getString("settings_sos_message", defaultMsg) ?: defaultMsg
+                val sendLocation = sharedPreferences.getBoolean("settings_enable_sending_location_in_tweet", true)
+                val sendCloseContacts = sharedPreferences.getBoolean("settings_enable_sending_close_contacts_in_tweet", true)
+                // TODO: implement close contacts feature.
+
+                if (sendLocation) {
+                    val location = getLocation()
+                    if (location != null) {
+                        msg += " My location: https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}"
+                    }
+                }
+                twitterService.sendTweet(this, msg)
+            }
         }
     }
 
-    fun getLocation() {
+    fun getLocation() : Location? {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -82,17 +98,15 @@ class ShakeService : Service(), SensorEventListener {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return
+            return null
         }
         val locationGPS: Location? = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         if (locationGPS != null) {
-            val lat: Double = locationGPS.latitude
-            val longi: Double = locationGPS.longitude
-            val latitude = lat.toString()
-            val longitude = longi.toString()
-            Log.i("loc","Your Location: \nLatitude: $latitude\nLongitude: $longitude")
+            return locationGPS
         } else {
             Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show()
         }
+        return null
     }
+
 }
