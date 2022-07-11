@@ -1,14 +1,12 @@
 package com.example.broadcastsos.network
 
-import com.example.broadcastsos.interfaces.IAuthTwitter
-
 import android.util.Log
+import com.example.broadcastsos.interfaces.IAuthTwitter
 import com.example.broadcastsos.interfaces.INetworkAccess
 import com.github.scribejava.apis.TwitterApi
 import com.github.scribejava.core.builder.ServiceBuilder
 import com.github.scribejava.core.model.OAuth1AccessToken
 import com.github.scribejava.core.model.OAuth1RequestToken
-import com.github.scribejava.core.model.Response
 import com.github.scribejava.core.oauth.OAuth10aService
 import kotlinx.coroutines.*
 

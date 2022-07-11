@@ -2,7 +2,6 @@ package com.example.broadcastsos.interfaces
 
 
 import android.util.Log
-import com.github.scribejava.core.model.OAuth1RequestToken
 
 interface INetworkAccess {
     fun fetchRequestTokenAndAuthUrl()

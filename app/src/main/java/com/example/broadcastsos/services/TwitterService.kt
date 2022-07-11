@@ -3,7 +3,6 @@ package com.example.broadcastsos.services
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import okhttp3.*
 import java.io.IOException

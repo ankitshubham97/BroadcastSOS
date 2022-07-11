@@ -1,7 +1,5 @@
 package com.example.broadcastsos.network
 
-import com.github.scribejava.core.model.OAuth1RequestToken
-
 object Network {
 
     sealed class Result {
