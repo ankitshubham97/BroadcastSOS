@@ -11,19 +11,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.hardware.Sensor
+import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationManager
-import android.os.*
-import android.os.PowerManager.WakeLock
-import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
-import android.hardware.SensorEvent
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.os.PowerManager
+import android.os.PowerManager.WakeLock
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
@@ -41,9 +40,6 @@ class ShakeService : Service(), SensorEventListener {
     companion object {
         var currentService: ShakeService? = null
 
-        // it is static so to make sure that it is always initialised when the viewmodel live data is
-        // is created, otherwise you risk a disconnection
-        var counter: MutableLiveData<Int> = MutableLiveData(0)
         private val TAG = ShakeService::class.java.simpleName
         private const val NOTIFICATION_ID = 9974
     }

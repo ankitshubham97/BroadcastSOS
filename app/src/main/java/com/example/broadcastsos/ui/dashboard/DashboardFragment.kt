@@ -63,9 +63,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
             binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
         }
 
-        initObservers()
-
-        viewModel.startCounter()
+        viewModel.startWorker()
 
         return root
     }
@@ -155,11 +153,4 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         Toast.makeText(activity, "Error connecting to Twitter", Toast.LENGTH_SHORT).show()
     }
 
-    private fun initObservers() {
-        Log.i("TAG", "registering Observers: ViewModel? $viewModel")
-        viewModel.currentCounter.observe(viewLifecycleOwner) { value ->
-            Log.i("TAG", "inserting value")
-            binding?.otpEditText.hint = value.toString()
-        }
-    }
 }

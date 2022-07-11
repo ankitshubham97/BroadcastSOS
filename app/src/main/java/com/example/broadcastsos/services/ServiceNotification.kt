@@ -11,7 +11,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
-import androidx.core.app.NotificationCompat.*
+import androidx.core.app.NotificationCompat.Builder
+import androidx.core.app.NotificationCompat.VISIBILITY_PRIVATE
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_MIN
 
 /**
