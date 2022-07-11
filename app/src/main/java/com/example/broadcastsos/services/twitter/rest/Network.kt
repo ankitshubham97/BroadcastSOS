@@ -1,9 +1,8 @@
 package com.example.broadcastsos.services.twitter.rest
 
+import android.util.Log
 import com.google.gson.Gson
 import okhttp3.*
-import java.io.IOException
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 object Network {
@@ -42,22 +41,8 @@ object Network {
         return deserializeResponse(response)
     }
 
-    fun fetchHttpResultAsync(
-        httpUrlBuilder: HttpUrl.Builder,
-        queryString: String,
-        onResult: (result: Result) -> Unit,
-        onFailure: (error: IOException) -> Unit
-    ) {
-        val request = setupHttpRequest(httpUrlBuilder, queryString)
-        httpClient.newCall(request).enqueue(object: Callback{
-            override fun onFailure(call: Call, exception: IOException) {
-                onFailure(exception)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                onResult(deserializeResponse(response))
-            }
-        })
+    fun fetchHttpResult(request: Request): Response {
+        return httpClient.newCall(request).execute()
     }
 
     private fun deserializeResponse(response: Response): Result {
@@ -65,6 +50,7 @@ object Network {
             return Result.NetworkError("Error ${response.code()}:${response.message()}")
         }
         val raw = response.body()?.string()
+        Log.i("Network", "raw: $raw")
         val result = Gson().fromJson(raw, Model.Result::class.java)
         return Result.NetworkResult(result.query.searchinfo.totalhits.toString())
     }

@@ -27,19 +27,7 @@
             android:defaultValue="true"/>
 
     </PreferenceCategory>
-
-    <PreferenceCategory app:title="Close Contacts">
-
-        <ListPreference
-            app:key="settings_close_contacts"
-            app:title="Close contacts"
-            app:entries="@array/secs_entries"
-            app:entryValues="@array/secs_values"
-            app:defaultValue="0"
-            android:summary="%s"/>
-
-    </PreferenceCategory>
-
+    
     <PreferenceCategory app:title="Rollback">
 
         <ListPreference

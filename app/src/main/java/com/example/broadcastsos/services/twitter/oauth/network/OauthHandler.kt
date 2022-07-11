@@ -46,13 +46,14 @@ class OauthHandler(private val view: IAuthTwitter) : INetworkAccess {
                     val oauthToken = OAuth1RequestToken(oauthToken, oauthTokenSecret);
                     val accessToken: OAuth1AccessToken = service.getAccessToken(oauthToken, oauthVerifier);
                     Log.i("accessToken", accessToken.rawResponse)
-                    OauthNetwork.Result.NetworkResult2(accessToken.token , accessToken.tokenSecret ).apply {
+                    val userId = accessToken.getParameter("user_id")
+                    OauthNetwork.Result.NetworkResult2(accessToken.token , accessToken.tokenSecret, userId).apply {
                         logOut("Async Fetch Done")
                     }
                 }
                 when (val result = defer.await()) {
                     is OauthNetwork.Result.NetworkResult2 -> {
-                        view.saveAccessToken(result.accessToken, result.accessTokenSecret)
+                        view.saveAccessToken(result.accessToken, result.accessTokenSecret, result.userId)
                         logOut("Async Post Success Result")
                     }
                 }

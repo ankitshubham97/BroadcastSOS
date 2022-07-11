@@ -26,9 +26,11 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.preference.PreferenceManager
+import com.example.broadcastsos.services.twitter.rest.MainView
 import com.example.broadcastsos.services.twitter.rest.TwitterService
+import okhttp3.Response
 
-class ShakeService : Service(), SensorEventListener {
+class ShakeService : Service(), SensorEventListener, MainView {
     private var wakeLock: WakeLock? = null
     private var currentServiceNotification: ServiceNotification? = null
     private var mSensorManager: SensorManager? = null
@@ -36,7 +38,7 @@ class ShakeService : Service(), SensorEventListener {
     private var mAccel: Float = 0.toFloat() // acceleration apart from gravity
     private var mAccelCurrent: Float = 0.toFloat() // current acceleration including gravity
     private var mAccelLast: Float = 0.toFloat() // last acceleration including gravity
-    private val twitterService: TwitterService by lazy { TwitterService() }
+    private val twitterService: TwitterService by lazy { TwitterService(this) }
 
     companion object {
         var currentService: ShakeService? = null
@@ -168,4 +170,13 @@ class ShakeService : Service(), SensorEventListener {
         }
         return null
     }
+
+    override fun updateScreen(result: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun fetchResponse(responseBody: String, responseCode: Int, requestCode: String) {
+        TODO("Not yet implemented")
+    }
+
 }

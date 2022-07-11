@@ -1,5 +1,6 @@
 package com.example.broadcastsos.services.twitter.rest
 
+import android.content.Context
 import kotlinx.coroutines.*
 import okhttp3.HttpUrl
 
@@ -45,5 +46,14 @@ class NetworkAccessCoroutinesAsyncAwait(private val view: MainView) : NetworkAcc
     override fun terminate() {
         coroutineScope?.cancel()
     }
+
+    override fun sendTweet(context: Context, message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFollowers(context: Context, requestCode: String) {
+        TODO("Not yet implemented")
+    }
+
 }
 

@@ -4,6 +4,6 @@ interface IAuthTwitter {
     fun saveOauthTokenAndUpdateAuthUrl(oauthToken: String, oauthTokenSecret: String, authUrl: String)
     fun errorOnSavingOauthTokenOrUpdatingAuthUrl()
 
-    fun saveAccessToken(accessToken: String, accessTokenSecret: String)
+    fun saveAccessToken(accessToken: String, accessTokenSecret: String, userId: String)
     fun errorOnVerifyingToken()
 }

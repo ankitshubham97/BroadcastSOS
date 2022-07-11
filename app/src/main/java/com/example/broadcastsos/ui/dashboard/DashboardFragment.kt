@@ -128,10 +128,11 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         Log.i("DashboardFragment", "oauthTokenSecret: $oauthTokenSecret")
     }
 
-    override fun saveAccessToken(accessToken: String, accessTokenSecret: String) {
+    override fun saveAccessToken(accessToken: String, accessTokenSecret: String, userId: String) {
         with (sharedPref.edit()) {
             putString("accessToken", accessToken)
             putString("accessTokenSecret", accessTokenSecret)
+            putString("userId", userId)
             apply()
         }
         binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_connected_round)
