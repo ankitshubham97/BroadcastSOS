@@ -27,12 +27,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<!--        <service-->
+<!--            android:name=".services.ShakeService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true" />-->
         <service
             android:name=".services.ShakeService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".services.CounterService"
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"

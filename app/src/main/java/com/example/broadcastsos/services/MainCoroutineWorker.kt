@@ -22,9 +22,9 @@ class MainCoroutineWorker(private val context: Context, workerParams: WorkerPara
 
     override suspend fun doWork(): Result {
         // do not launch if the service is already alive
-        if (CounterService.currentService == null) {
+        if (ShakeService.currentService == null) {
             withContext(Dispatchers.IO) {
-                val trackerServiceIntent = Intent(context, CounterService::class.java)
+                val trackerServiceIntent = Intent(context, ShakeService::class.java)
                 ServiceNotification.notificationText = "do not close the app, please"
                 ServiceNotification.notificationIcon = R.drawable.ic_launcher_foreground
                 Log.i(TAG, "Launching tracker")

@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -20,7 +19,6 @@ import com.example.broadcastsos.databinding.FragmentDashboardBinding
 import com.example.broadcastsos.interfaces.IAuthTwitter
 import com.example.broadcastsos.models.MyViewModel
 import com.example.broadcastsos.network.Handler
-import com.example.broadcastsos.services.ShakeService
 
 
 class DashboardFragment : Fragment(), IAuthTwitter {
@@ -68,9 +66,6 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         initObservers()
 
         viewModel.startCounter()
-
-//        val intent = Intent(activity, ShakeService::class.java)
-//        activity.startService(intent)
 
         return root
     }
