@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="General">
+    <PreferenceCategory app:title="Message">
 
         <EditTextPreference
             app:key="settings_sos_message"
@@ -9,6 +9,8 @@
             app:defaultValue="SOS: This is an auto-generated message whenever I am in danger. Please help me!"
             app:useSimpleSummaryProvider="true" />
 
+    </PreferenceCategory>
+    <PreferenceCategory app:title="SOS Tweets">
         <CheckBoxPreference
             app:key="settings_enable_sending_tweet"
             app:title="Enable sending tweet?"
@@ -19,15 +21,14 @@
             app:dependency="settings_enable_sending_tweet"
             app:title="Sending location in tweet?"
             android:defaultValue="true"/>
-
-        <CheckBoxPreference
-            app:key="settings_enable_sending_close_contacts_in_tweet"
-            app:dependency="settings_enable_sending_tweet"
-            app:title="Send close contacts in tweet?"
-            android:defaultValue="true"/>
-
     </PreferenceCategory>
-    
+    <PreferenceCategory app:title="SOS DMs">
+        <CheckBoxPreference
+            app:key="settings_enable_sending_dms_to_close_contacts"
+            app:title="Send DMs to close contacts?"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="Rollback">
 
         <ListPreference

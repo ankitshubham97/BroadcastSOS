@@ -13,9 +13,10 @@ import androidx.preference.*
 import com.example.broadcastsos.Constants.Companion.GET_FOLLOWERS
 import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentSettingsBinding
-import com.example.broadcastsos.services.twitter.rest.*
+import com.example.broadcastsos.services.twitter.rest.models.GetFollowersResponseModel
+import com.example.broadcastsos.services.twitter.rest.TwitterViewModel
+import com.example.broadcastsos.services.twitter.rest.TwitterService
 import com.google.gson.Gson
-import okhttp3.Response
 
 
 class SettingsFragment : Fragment() {
@@ -51,30 +52,17 @@ class SettingsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    class SettingsFragment : PreferenceFragmentCompat(), MainView {
-        private val networkAccessCoroutinesAsyncAwait = NetworkAccessCoroutinesAsyncAwait(this)
+    class SettingsFragment : PreferenceFragmentCompat(), TwitterViewModel {
         private val twitterService: TwitterService by lazy { TwitterService(this) }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 //            networkAccessCoroutinesAsyncAwait.fetchData(Network.httpUrlBuilder, "Boy")
             twitterService.getFollowers(this.requireContext(), GET_FOLLOWERS)
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.requireContext())
-            val settings_close_contacts = sharedPreferences.getStringSet("settings_close_contacts", null);
-            if (settings_close_contacts != null) {
-                val set = settings_close_contacts
-                for (i in set) {
-                    Log.i("sddsssss", i)
-                }
-            }
 
         }
 
-        override fun updateScreen(result: String) {
-            Log.i("updateScreen", result)
-        }
-
-        override fun fetchResponse(responseBody: String, responseCode: Int, requestCode: String) {
+        override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
             if (requestCode == GET_FOLLOWERS) {
                 if (responseCode == 200) {
                     Log.i("comparison", responseBody)
@@ -83,13 +71,13 @@ class SettingsFragment : Fragment() {
                     result.data.map { Log.i("fetchResponse names", it.name) }
                     val screen = preferenceManager.preferenceScreen as PreferenceScreen
                     val category = PreferenceCategory(context)
-                    category.title = "category name"
+                    category.title = "Close Contacts"
 
                     screen.addPreference(category)
 
                     val contactList = MultiSelectListPreference(context)
-                    contactList.title = "title"
-                    contactList.summary = "summary"
+                    contactList.title = "Your close contacts"
+                    contactList.summary = "DMs will be sent to these contacts"
                     contactList.entries = result.data.map { it.name }.toTypedArray()
                     contactList.entryValues = result.data.map { it.id }.toTypedArray()
                     contactList.key = "settings_close_contacts"

@@ -15,9 +15,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentDashboardBinding
+import com.example.broadcastsos.services.background.RestarterBroadcastReceiver
 import com.example.broadcastsos.services.twitter.oauth.interfaces.IAuthTwitter
 import com.example.broadcastsos.services.twitter.oauth.network.OauthHandler
-import com.example.broadcastsos.services.background.RestarterBroadcastReceiver
 
 
 class DashboardFragment : Fragment(), IAuthTwitter {

@@ -1,4 +1,4 @@
-package com.example.broadcastsos.services.twitter.rest
+package com.example.broadcastsos.services.twitter.rest.models
 
 
 import com.google.gson.annotations.SerializedName

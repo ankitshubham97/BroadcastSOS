@@ -1,8 +1,8 @@
 package com.example.broadcastsos.services.twitter.rest
 
-import android.util.Log
-import com.google.gson.Gson
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.util.concurrent.TimeUnit
 
 object Network {
@@ -11,63 +11,8 @@ object Network {
             .connectTimeout(1, TimeUnit.SECONDS)
             .build()
 
-    val httpUrlBuilder = HttpUrl.Builder()
-            .host("en.wikipedia.org")
-            .addPathSegment("w")
-            .addOthers()
-
-    val errorHttpUrlBuilder = HttpUrl.Builder()
-            .host("en.wikipedia.org")
-            .addPathSegment("x")
-            .addOthers()
-
-    val crashHttpUrlBuilder = HttpUrl.Builder()
-            .host("en.wikipedia.or")
-            .addPathSegment("w")
-            .addOthers()
-
-    private fun HttpUrl.Builder.addOthers() = this
-            .scheme("https")
-            .addPathSegment("api.php")
-            .addQueryParameter("action", "query")
-            .addQueryParameter("format", "json")
-            .addQueryParameter("list", "search")
-
-    private const val SEARCH_KEY = "srsearch"
-
-    fun fetchHttpResult(httpUrlBuilder: HttpUrl.Builder, queryString: String): Result {
-        val request = setupHttpRequest(httpUrlBuilder, queryString)
-        val response = httpClient.newCall(request).execute()
-        return deserializeResponse(response)
-    }
-
     fun fetchHttpResult(request: Request): Response {
         return httpClient.newCall(request).execute()
     }
 
-    private fun deserializeResponse(response: Response): Result {
-        if (!response.isSuccessful) {
-            return Result.NetworkError("Error ${response.code()}:${response.message()}")
-        }
-        val raw = response.body()?.string()
-        Log.i("Network", "raw: $raw")
-        val result = Gson().fromJson(raw, Model.Result::class.java)
-        return Result.NetworkResult(result.query.searchinfo.totalhits.toString())
-    }
-
-    private fun setupHttpRequest(
-        httpUrlBuilder: HttpUrl.Builder,
-        queryString: String
-    ): Request {
-        val httpUrl = httpUrlBuilder
-            .removeAllQueryParameters(SEARCH_KEY)
-            .addQueryParameter(SEARCH_KEY, queryString)
-            .build()
-        return Request.Builder().get().url(httpUrl).build()
-    }
-
-    sealed class Result {
-        class NetworkError(val message: String) : Result()
-        class NetworkResult(val message: String) : Result()
-    }
 }

@@ -25,12 +25,18 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceManager
-import com.example.broadcastsos.services.twitter.rest.MainView
+import androidx.preference.PreferenceScreen
+import com.example.broadcastsos.Constants
+import com.example.broadcastsos.Constants.Companion.SEND_DM
+import com.example.broadcastsos.services.twitter.rest.TwitterViewModel
 import com.example.broadcastsos.services.twitter.rest.TwitterService
-import okhttp3.Response
+import com.example.broadcastsos.services.twitter.rest.models.GetFollowersResponseModel
+import com.google.gson.Gson
 
-class ShakeService : Service(), SensorEventListener, MainView {
+class ShakeService : Service(), SensorEventListener, TwitterViewModel {
     private var wakeLock: WakeLock? = null
     private var currentServiceNotification: ServiceNotification? = null
     private var mSensorManager: SensorManager? = null
@@ -125,11 +131,10 @@ class ShakeService : Service(), SensorEventListener, MainView {
             Log.i("TAG","Shaken!!!!")
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
             val sendTweet = sharedPreferences.getBoolean("settings_enable_sending_tweet", false)
+            val defaultMsg = "SOS: This is an auto-generated message whenever I am in danger. Please help me!"
+            var msg = sharedPreferences.getString("settings_sos_message", defaultMsg) ?: defaultMsg
             if (sendTweet) {
-                val defaultMsg = "SOS: This is an auto-generated message whenever I am in danger. Please help me!"
-                var msg = sharedPreferences.getString("settings_sos_message", defaultMsg) ?: defaultMsg
                 val sendLocation = sharedPreferences.getBoolean("settings_enable_sending_location_in_tweet", true)
-                val sendCloseContacts = sharedPreferences.getBoolean("settings_enable_sending_close_contacts_in_tweet", true)
                 // TODO: implement close contacts feature.
 
                 if (sendLocation) {
@@ -140,10 +145,20 @@ class ShakeService : Service(), SensorEventListener, MainView {
                 }
                 twitterService.sendTweet(this, msg)
             }
+            val sendDMsToCloseContacts = sharedPreferences.getBoolean("settings_enable_sending_dms_to_close_contacts", true)
+            if (sendDMsToCloseContacts) {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+                val closeContactIds = sharedPreferences.getStringSet("settings_close_contacts", null);
+                if (closeContactIds != null) {
+                    for (i in closeContactIds) {
+                        twitterService.sendDM(this, i, msg, SEND_DM)
+                    }
+                }
+            }
         }
     }
 
-    fun getLocation() : Location? {
+    private fun getLocation() : Location? {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -171,12 +186,8 @@ class ShakeService : Service(), SensorEventListener, MainView {
         return null
     }
 
-    override fun updateScreen(result: String) {
-        TODO("Not yet implemented")
-    }
+    override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
 
-    override fun fetchResponse(responseBody: String, responseCode: Int, requestCode: String) {
-        TODO("Not yet implemented")
     }
 
 }
