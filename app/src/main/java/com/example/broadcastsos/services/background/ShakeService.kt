@@ -5,6 +5,7 @@
 package com.example.broadcastsos.services.background
 
 import android.Manifest
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -25,12 +26,18 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceScreen
 import com.example.broadcastsos.Constants
+import com.example.broadcastsos.Constants.Companion.CHANNEL_ID
 import com.example.broadcastsos.Constants.Companion.SEND_DM
+import com.example.broadcastsos.Constants.Companion.SEND_TWEET
+import com.example.broadcastsos.MainActivity
+import com.example.broadcastsos.R
 import com.example.broadcastsos.services.twitter.rest.TwitterViewModel
 import com.example.broadcastsos.services.twitter.rest.TwitterService
 import com.example.broadcastsos.services.twitter.rest.models.GetFollowersResponseModel
@@ -143,7 +150,7 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
                         msg += " My location: https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}"
                     }
                 }
-                twitterService.sendTweet(this, msg)
+                twitterService.sendTweet(this, msg, SEND_TWEET)
             }
             val sendDMsToCloseContacts = sharedPreferences.getBoolean("settings_enable_sending_dms_to_close_contacts", true)
             if (sendDMsToCloseContacts) {
@@ -177,7 +184,30 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
     }
 
     override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
+        if (requestCode == SEND_TWEET) {
+            Log.i(TAG, "Tweet sent")
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
+            val fullScreenIntent = Intent(this, MainActivity::class.java)
+            val fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
+                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("SOS Sent!")
+                .setContentText("Tap here to undo the SOS tweet.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+            with(NotificationManagerCompat.from(this)) {
+                // notificationId is a unique int for each notification that you must define
+                notify(121, builder.build())
+            }
+        } else if (requestCode == SEND_DM) {
+            Log.i(TAG, "DM sent")
+        }
     }
 
 }

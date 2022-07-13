@@ -36,7 +36,7 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
             accessSecret = sharedPref.getString("accessTokenSecret", "")
         )
 
-    override fun sendTweet(context: Context, tweet: String) {
+    override fun sendTweet(context: Context, tweet: String, requestCode: String) {
 
         coroutineScope?.cancel()
         coroutineScope = MainScope()
@@ -64,6 +64,8 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
                 }
                 when (val result = defer.await()) {
                     is Response -> {
+                        val body = result.body()?.string() ?: ""
+                        viewModel.syncResponse(body, result.code(),  requestCode)
                     }
                 }
             } catch (e: CancellationException) {
