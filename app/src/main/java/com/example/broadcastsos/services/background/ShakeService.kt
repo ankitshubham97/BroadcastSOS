@@ -154,7 +154,6 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
             }
             val sendDMsToCloseContacts = sharedPreferences.getBoolean("settings_enable_sending_dms_to_close_contacts", true)
             if (sendDMsToCloseContacts) {
-                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
                 val closeContactIds = sharedPreferences.getStringSet("settings_close_contacts", null);
                 if (closeContactIds != null) {
                     for (i in closeContactIds) {
@@ -190,19 +189,18 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
             val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-            val fullScreenIntent = Intent(this, MainActivity::class.java)
-            val fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
-                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
+            val timeToUndo = sharedPreferences.getString("settings_time_to_undo_false_alarm", "60" /* 1 minute */)!!.toLong()*1000
+            Log.i(TAG, "Time to undo: $timeToUndo")
             val builder = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("SOS Sent!")
                 .setContentText("Tap here to undo the SOS tweet.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
+                .setTimeoutAfter(timeToUndo)
                 .setAutoCancel(true)
             with(NotificationManagerCompat.from(this)) {
-                // notificationId is a unique int for each notification that you must define
                 notify(121, builder.build())
             }
         } else if (requestCode == SEND_DM) {
