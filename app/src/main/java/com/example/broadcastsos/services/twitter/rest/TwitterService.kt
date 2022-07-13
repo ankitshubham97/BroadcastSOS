@@ -65,6 +65,10 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
                 when (val result = defer.await()) {
                     is Response -> {
                         val body = result.body()?.string() ?: ""
+                        Log.d("TwitterService", body)
+                        Log.d("TwitterService", result.code().toString())
+                        // {"detail":"You are not allowed to create a Tweet with duplicate content.","type":"about:blank","title":"Forbidden","status":403} 403
+                        // {"data":{"id":"1547341606919245824","text":"test"}} 201
                         viewModel.syncResponse(body, result.code(),  requestCode)
                     }
                 }
@@ -72,6 +76,42 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
             }
         }
 
+    }
+
+    override fun deleteTweet(context: Context, tweetId: String, requestCode: String) {
+
+        coroutineScope?.cancel()
+        coroutineScope = MainScope()
+        coroutineScope?.launch(errorHandler) {
+            try {
+                val defer = async(Dispatchers.IO) {
+                    sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+                    val oauthKeys = getOauthKeys(context)
+                    val oauth1 = Oauth1SigningInterceptor(oauthKeys = oauthKeys)
+
+                    val request = Request.Builder()
+                        .url("https://api.twitter.com/2/tweets/${tweetId}")
+                        .delete()
+                        .build()
+
+                    val signed = oauth1.signRequest(request)
+
+                    Network.fetchHttpResult(signed).apply {
+                    }
+                }
+                when (val result = defer.await()) {
+                    is Response -> {
+                        val body = result.body()?.string() ?: ""
+                        Log.d("TwitterService", body)
+                        Log.d("TwitterService", result.code().toString())
+                        // {"detail":"You are not allowed to create a Tweet with duplicate content.","type":"about:blank","title":"Forbidden","status":403} 403
+                        // {"data":{"id":"1547341606919245824","text":"test"}} 201
+                        viewModel.syncResponse(body, result.code(),  requestCode)
+                    }
+                }
+            } catch (e: CancellationException) {
+            }
+        }
     }
 
     override fun getFollowers(context: Context, requestCode: String) {

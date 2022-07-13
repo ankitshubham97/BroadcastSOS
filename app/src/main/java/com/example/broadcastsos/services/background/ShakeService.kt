@@ -34,12 +34,14 @@ import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceScreen
 import com.example.broadcastsos.Constants
 import com.example.broadcastsos.Constants.Companion.CHANNEL_ID
+import com.example.broadcastsos.Constants.Companion.DELETE_TWEET_INTENT_PAYLOAD
 import com.example.broadcastsos.Constants.Companion.SEND_DM
 import com.example.broadcastsos.Constants.Companion.SEND_TWEET
 import com.example.broadcastsos.MainActivity
 import com.example.broadcastsos.R
 import com.example.broadcastsos.services.twitter.rest.TwitterViewModel
 import com.example.broadcastsos.services.twitter.rest.TwitterService
+import com.example.broadcastsos.services.twitter.rest.models.CreateTweetResponseModel
 import com.example.broadcastsos.services.twitter.rest.models.GetFollowersResponseModel
 import com.google.gson.Gson
 
@@ -184,13 +186,23 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
 
     override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
         if (requestCode == SEND_TWEET) {
+            if (responseCode != 201) {
+                Log.i(TAG, "Error sending tweet: $responseBody")
+                Toast.makeText(this, "Error sending tweet", Toast.LENGTH_SHORT).show()
+                return
+            }
             Log.i(TAG, "Tweet sent")
+            val result =
+                Gson().fromJson(responseBody, CreateTweetResponseModel::class.java)
             val intent = Intent(this, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-            val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            Log.i(TAG, "Tweet sent: ${result.data.id}")
+            intent.putExtra(DELETE_TWEET_INTENT_PAYLOAD, result.data.id);
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
             val timeToUndo = sharedPreferences.getString("settings_time_to_undo_false_alarm", "60" /* 1 minute */)!!.toLong()*1000
+
             Log.i(TAG, "Time to undo: $timeToUndo")
             val builder = NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)

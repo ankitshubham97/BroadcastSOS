@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -16,20 +17,34 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.example.broadcastsos.Constants.Companion.CHANNEL_ID
+import com.example.broadcastsos.Constants.Companion.DELETE_TWEET
+import com.example.broadcastsos.Constants.Companion.DELETE_TWEET_INTENT_PAYLOAD
 import com.example.broadcastsos.databinding.ActivityMainBinding
+import com.example.broadcastsos.services.twitter.rest.TwitterService
+import com.example.broadcastsos.services.twitter.rest.TwitterViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TwitterViewModel {
 
     private lateinit var binding: ActivityMainBinding
     var locationManager: LocationManager? = null
     private val REQUEST_LOCATION = 1
+    private val twitterService: TwitterService by lazy { TwitterService(this) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            val extras = intent.extras
+            val tweetId = extras?.getString(DELETE_TWEET_INTENT_PAYLOAD)
+            if (!tweetId.isNullOrEmpty()) {
+                Log.i("MainActivity", "Deleting tweet $tweetId")
+                twitterService.deleteTweet(this, tweetId, DELETE_TWEET)
+            }
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -96,6 +111,12 @@ class MainActivity : AppCompatActivity() {
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
+        if (requestCode == DELETE_TWEET) {
+            Toast.makeText(this, "Tweet deleted", Toast.LENGTH_SHORT).show()
         }
     }
 }

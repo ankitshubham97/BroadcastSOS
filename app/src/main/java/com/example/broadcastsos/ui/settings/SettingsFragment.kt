@@ -65,7 +65,6 @@ class SettingsFragment : Fragment() {
         override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
             if (requestCode == GET_FOLLOWERS) {
                 if (responseCode == 200) {
-                    Log.i("comparison", responseBody)
                     val result =
                         Gson().fromJson(responseBody, GetFollowersResponseModel::class.java)
                     val screen = preferenceManager.preferenceScreen as PreferenceScreen
