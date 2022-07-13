@@ -21,8 +21,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     var locationManager: LocationManager? = null
-    var latitude: String? = null
-    var longitude:String? = null
     private val REQUEST_LOCATION = 1
 
 
@@ -50,7 +48,11 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this@MainActivity, "Permission already granted", Toast.LENGTH_SHORT).show()
 
         } else {
-            askedLocationPermission()
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION
+            )
         }
     }
 
@@ -74,22 +76,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-    fun askedLocationPermission(): Boolean {
-        if (ActivityCompat.checkSelfPermission(
-                this@MainActivity, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this@MainActivity, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION
-            )
-            return true
-        }
-        return false
-    }
-
 }

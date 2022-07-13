@@ -27,6 +27,4 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_settings">Settings</string>
 
-    <string name="com.twitter.sdk.android.CONSUMER_KEY">Aybi4VfPWujGV6RBAope2Y23k</string>
-    <string name="com.twitter.sdk.android.CONSUMER_SECRET">dT8dVSAImrX2ByaTLKG5tgkCRqoNHRlkHRNhxG5Z2MfztdGd5j</string>
 </resources>

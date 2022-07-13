@@ -1,6 +1,7 @@
 package com.example.broadcastsos.services.twitter.oauth.network
 
 import android.util.Log
+import com.example.broadcastsos.Keys
 import com.example.broadcastsos.services.twitter.oauth.interfaces.IAuthTwitter
 import com.example.broadcastsos.services.twitter.oauth.interfaces.INetworkAccess
 import com.github.scribejava.apis.TwitterApi
@@ -36,8 +37,8 @@ class OauthHandler(private val view: IAuthTwitter) : INetworkAccess {
         coroutineScope?.launch(errorHandlerForVerifyToken) {
             try {
                 val defer = async(Dispatchers.IO) {
-                    val service: OAuth10aService = ServiceBuilder("Aybi4VfPWujGV6RBAope2Y23k")
-                        .apiSecret("dT8dVSAImrX2ByaTLKG5tgkCRqoNHRlkHRNhxG5Z2MfztdGd5j")
+                    val service: OAuth10aService = ServiceBuilder(Keys.CONSUMER_KEY)
+                        .apiSecret(Keys.CONSUMER_SECRET)
                         .build(TwitterApi.instance())
                     Log.i("Handler", "verifyToken")
                     Log.i("oauthToken", oauthToken)
@@ -71,8 +72,8 @@ class OauthHandler(private val view: IAuthTwitter) : INetworkAccess {
                 val defer = async(Dispatchers.IO) {
                     logOut("Async Fetch Started")
                     var requestToken: OAuth1RequestToken ?= null
-                    val service: OAuth10aService = ServiceBuilder("Aybi4VfPWujGV6RBAope2Y23k")
-                        .apiSecret("dT8dVSAImrX2ByaTLKG5tgkCRqoNHRlkHRNhxG5Z2MfztdGd5j")
+                    val service: OAuth10aService = ServiceBuilder(Keys.CONSUMER_KEY)
+                        .apiSecret(Keys.CONSUMER_SECRET)
                         .build(TwitterApi.instance())
 
                     requestToken = service.requestToken;

@@ -135,11 +135,11 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
             var msg = sharedPreferences.getString("settings_sos_message", defaultMsg) ?: defaultMsg
             if (sendTweet) {
                 val sendLocation = sharedPreferences.getBoolean("settings_enable_sending_location_in_tweet", true)
-                // TODO: implement close contacts feature.
-
                 if (sendLocation) {
+                    Log.i(TAG, "Sending location enabled")
                     val location = getLocation()
                     if (location != null) {
+                        Log.i(TAG, "Sending location")
                         msg += " My location: https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}"
                     }
                 }
@@ -163,26 +163,16 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            // Can't do much here, so just return null.
             return null
         }
-        val locationGPS: Location? = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val locationGPS: Location? = locationManager?.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
         if (locationGPS != null) {
             return locationGPS
-        } else {
-            Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show()
         }
+        Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show()
         return null
     }
 

@@ -3,6 +3,7 @@ package com.example.broadcastsos.services.twitter.rest
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.example.broadcastsos.Keys
 import kotlinx.coroutines.*
 import okhttp3.*
 import okio.Buffer
@@ -29,8 +30,8 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
     }
     private fun getOauthKeys(context: Context) =
         OauthKeys(
-            consumerKey = "Aybi4VfPWujGV6RBAope2Y23k",
-            consumerSecret = "dT8dVSAImrX2ByaTLKG5tgkCRqoNHRlkHRNhxG5Z2MfztdGd5j",
+            consumerKey = Keys.CONSUMER_KEY,
+            consumerSecret = Keys.CONSUMER_SECRET,
             accessToken = sharedPref.getString("accessToken", ""),
             accessSecret = sharedPref.getString("accessTokenSecret", "")
         )

@@ -68,7 +68,6 @@ class SettingsFragment : Fragment() {
                     Log.i("comparison", responseBody)
                     val result =
                         Gson().fromJson(responseBody, GetFollowersResponseModel::class.java)
-                    result.data.map { Log.i("fetchResponse names", it.name) }
                     val screen = preferenceManager.preferenceScreen as PreferenceScreen
                     val category = PreferenceCategory(context)
                     category.title = "Close Contacts"
