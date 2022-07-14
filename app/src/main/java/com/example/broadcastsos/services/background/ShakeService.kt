@@ -223,6 +223,7 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
                 Log.i(TAG, "Error sending tweet: $responseBody")
                 // Mostly this is due to the fact that multiple tweets with the same content are sent at the same time. Let's retrieve the last successful tweet and pass that in the following intent.
                 twitterService.getBroadcastSosTweets(this, GET_BROADCASTSOS_TWEETS)
+                return
             }
             Log.i(TAG, "Tweet sent")
             val result =
