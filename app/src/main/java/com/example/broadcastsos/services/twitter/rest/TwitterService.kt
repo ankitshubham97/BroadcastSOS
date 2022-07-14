@@ -38,11 +38,12 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
         )
 
     override fun sendTweet(context: Context, tweet: String, requestCode: String) {
-
-        coroutineScope?.cancel()
+        Log.i("TwitterService", "sendTweet")
+        // // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandler) {
             try {
+                Log.i("TwitterService", "sendTweet try")
                 val defer = async(Dispatchers.IO) {
                     sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
                     val oauthKeys = getOauthKeys(context)
@@ -81,7 +82,7 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
 
     override fun deleteTweet(context: Context, tweetId: String, requestCode: String) {
 
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandler) {
             try {
@@ -119,7 +120,7 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
         context: Context,
         requestCode: String
     ) {
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandler) {
             try {
@@ -150,7 +151,7 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
     }
 
     override fun getFollowers(context: Context, requestCode: String) {
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandler) {
             try {
@@ -182,7 +183,7 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
     }
 
     override fun sendDM(context: Context, recipientId: String, msg: String, requestCode: String) {
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandler) {
             try {
@@ -218,7 +219,7 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
     }
 
     override fun getMe(context: Context, requestCode: String) {
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandler) {
             try {

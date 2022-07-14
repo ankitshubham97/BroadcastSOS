@@ -32,7 +32,7 @@ class OauthHandler(private val view: IAuthTwitter) : INetworkAccess {
 
 
     override fun verifyToken(oauthToken: String, oauthTokenSecret: String, oauthVerifier: String) {
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandlerForVerifyToken) {
             try {
@@ -65,7 +65,7 @@ class OauthHandler(private val view: IAuthTwitter) : INetworkAccess {
     }
 
     override fun fetchRequestTokenAndAuthUrl() {
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
         coroutineScope = MainScope()
         coroutineScope?.launch(errorHandlerForFetchRequestTokenAndAuthUrl) {
             try {
@@ -99,7 +99,7 @@ class OauthHandler(private val view: IAuthTwitter) : INetworkAccess {
     }
 
     override fun terminate() {
-        coroutineScope?.cancel()
+        // coroutineScope?.cancel()
     }
 }
 

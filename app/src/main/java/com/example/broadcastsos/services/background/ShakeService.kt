@@ -216,7 +216,8 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
                     notify(121, builder.build())
                 }
             }
-        } else if (requestCode == SEND_TWEET) {
+        }
+        if (requestCode == SEND_TWEET) {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
             val sharedPref = this.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
             if (responseCode != 201) {
@@ -248,7 +249,8 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
             with(NotificationManagerCompat.from(this)) {
                 notify(121, builder.build())
             }
-        } else if (requestCode == SEND_DM) {
+        }
+        if (requestCode == SEND_DM) {
             Log.i(TAG, "DM sent")
         }
     }
