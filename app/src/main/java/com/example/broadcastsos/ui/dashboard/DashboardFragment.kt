@@ -13,14 +13,21 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.example.broadcastsos.Constants.Companion.GET_ME
 import com.example.broadcastsos.R
 import com.example.broadcastsos.databinding.FragmentDashboardBinding
 import com.example.broadcastsos.services.background.RestarterBroadcastReceiver
 import com.example.broadcastsos.services.twitter.oauth.interfaces.IAuthTwitter
 import com.example.broadcastsos.services.twitter.oauth.network.OauthHandler
+import com.example.broadcastsos.services.twitter.rest.TwitterService
+import com.example.broadcastsos.services.twitter.rest.TwitterViewModel
+import com.example.broadcastsos.services.twitter.rest.models.GetMeResponseModel
+import com.google.gson.Gson
 
 
-class DashboardFragment : Fragment(), IAuthTwitter {
+class DashboardFragment : Fragment(), IAuthTwitter, TwitterViewModel {
 
     private var _binding: FragmentDashboardBinding? = null
 
@@ -30,6 +37,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     private val networkHandler = OauthHandler(this)
     private lateinit var sharedPref: SharedPreferences;
     private var isTwitterConnected = MutableLiveData(false)
+    private val twitterService: TwitterService by lazy { TwitterService(this) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,6 +89,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
         verifyButton.visibility = View.GONE
         otpEditText.text.clear()
         otpEditText.visibility = View.GONE
+        twitterService.getMe(requireContext(), GET_ME)
     }
 
     fun paintAfterTwitterDisconnects() {
@@ -104,6 +113,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
             }
         })
         otpEditText.visibility = View.VISIBLE
+        Glide.with(this).clear(binding.ivDashboardProfile)
 
     }
 
@@ -136,6 +146,7 @@ class DashboardFragment : Fragment(), IAuthTwitter {
             apply()
         }
         binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_connected_round)
+        twitterService.getMe(requireContext(), GET_ME)
         isTwitterConnected.value = true
         Toast.makeText(activity, "Connected to Twitter!", Toast.LENGTH_SHORT).show()
     }
@@ -148,6 +159,19 @@ class DashboardFragment : Fragment(), IAuthTwitter {
     override fun errorOnSavingOauthTokenOrUpdatingAuthUrl() {
         binding.ivDashboardIcon.setImageResource(R.mipmap.ic_launcher_disconnected_round)
         Toast.makeText(activity, "Error connecting to Twitter", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
+        if (requestCode == GET_ME) {
+            if (responseCode == 200) {
+                val result =
+                    Gson().fromJson(responseBody, GetMeResponseModel::class.java)
+                Glide.with(requireContext())
+                    .load(result.data?.profileImageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(binding.ivDashboardProfile);
+            }
+        }
     }
 
 }

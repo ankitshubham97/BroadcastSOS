@@ -9,5 +9,6 @@ class Constants {
         const val DELETE_TWEET = "DELETE_TWEET"
         const val DELETE_TWEET_INTENT_PAYLOAD = "DELETE_TWEET_INTENT_PAYLOAD"
         const val GET_BROADCASTSOS_TWEETS = "GET_BROADCASTSOS_TWEETS"
+        const val GET_ME = "GET_ME"
     }
 }

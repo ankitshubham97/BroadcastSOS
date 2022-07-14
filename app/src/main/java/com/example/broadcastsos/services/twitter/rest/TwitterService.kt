@@ -216,6 +216,37 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
             }
         }
     }
+
+    override fun getMe(context: Context, requestCode: String) {
+        coroutineScope?.cancel()
+        coroutineScope = MainScope()
+        coroutineScope?.launch(errorHandler) {
+            try {
+                val defer = async(Dispatchers.IO) {
+                    sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+
+                    val userId = sharedPref.getString("userId", "") ?: ""
+                    val request = Request.Builder()
+                        .addHeader("Authorization", "Bearer ${BEARER_TOKEN}")
+                        .url("https://api.twitter.com/2/users/${userId}?user.fields=name,profile_image_url,username")
+                        .get()
+                        .build()
+
+                    Network.fetchHttpResult(request).apply {
+                    }
+                }
+                when (val result = defer.await()) {
+                    is Response -> {
+                        val body = result.body()?.string() ?: ""
+                        Log.d("TwitterService", body)
+                        Log.d("TwitterService", result.code().toString())
+                        viewModel.syncResponse(body, result.code(),  requestCode)
+                    }
+                }
+            } catch (e: CancellationException) {
+            }
+        }
+    }
 }
 
 

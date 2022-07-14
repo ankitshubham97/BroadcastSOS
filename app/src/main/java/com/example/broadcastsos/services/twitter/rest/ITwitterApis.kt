@@ -9,4 +9,5 @@ interface ITwitterApis {
     fun getBroadcastSosTweets(context: Context, requestCode: String)
     fun getFollowers(context: Context, requestCode: String)
     fun sendDM(context: Context, recipientId: String, msg: String, requestCode: String)
+    fun getMe(context: Context, requestCode: String)
 }
