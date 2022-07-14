@@ -35,14 +35,17 @@ import androidx.preference.PreferenceScreen
 import com.example.broadcastsos.Constants
 import com.example.broadcastsos.Constants.Companion.CHANNEL_ID
 import com.example.broadcastsos.Constants.Companion.DELETE_TWEET_INTENT_PAYLOAD
+import com.example.broadcastsos.Constants.Companion.GET_BROADCASTSOS_TWEETS
 import com.example.broadcastsos.Constants.Companion.SEND_DM
 import com.example.broadcastsos.Constants.Companion.SEND_TWEET
 import com.example.broadcastsos.MainActivity
 import com.example.broadcastsos.R
+import com.example.broadcastsos.services.twitter.rest.Oauth1SigningInterceptor
 import com.example.broadcastsos.services.twitter.rest.TwitterViewModel
 import com.example.broadcastsos.services.twitter.rest.TwitterService
 import com.example.broadcastsos.services.twitter.rest.models.CreateTweetResponseModel
 import com.example.broadcastsos.services.twitter.rest.models.GetFollowersResponseModel
+import com.example.broadcastsos.services.twitter.rest.models.GetTweetsResponseModel
 import com.google.gson.Gson
 
 class ShakeService : Service(), SensorEventListener, TwitterViewModel {
@@ -136,34 +139,36 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
         val delta = mAccelCurrent - mAccelLast
         mAccel = mAccel * 0.9f + delta // perform low-cut filter
 
-        if (mAccel > 11) {
-            Log.i("TAG","Shaken!!!!")
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
-            val sendTweet = sharedPreferences.getBoolean("settings_enable_sending_tweet", false)
-            val defaultMsg = "SOS: This is an auto-generated message whenever I am in danger. Please help me!"
-            var msg = sharedPreferences.getString("settings_sos_message", defaultMsg) ?: defaultMsg
-            if (sendTweet) {
-                val sendLocation = sharedPreferences.getBoolean("settings_enable_sending_location_in_tweet", true)
-                if (sendLocation) {
-                    Log.i(TAG, "Sending location enabled")
-                    val location = getLocation()
-                    if (location != null) {
-                        Log.i(TAG, "Sending location")
-                        msg += " My location: https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}"
-                    }
+        if (mAccel < 11) {
+            return
+        }
+        Log.i("TAG","Shaken!!!!")
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
+        val sendTweet = sharedPreferences.getBoolean("settings_enable_sending_tweet", false)
+        val defaultMsg = "SOS: This is an auto-generated message whenever I am in danger. Please help me!"
+        var msg = "#BroadcastSOS ${sharedPreferences.getString("settings_sos_message", defaultMsg) ?: defaultMsg}"
+        if (sendTweet) {
+            val sendLocation = sharedPreferences.getBoolean("settings_enable_sending_location_in_tweet", true)
+            if (sendLocation) {
+                Log.i(TAG, "Sending location enabled")
+                val location = getLocation()
+                if (location != null) {
+                    Log.i(TAG, "Sending location")
+                    msg += " My location: https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}"
                 }
-                twitterService.sendTweet(this, msg, SEND_TWEET)
             }
-            val sendDMsToCloseContacts = sharedPreferences.getBoolean("settings_enable_sending_dms_to_close_contacts", true)
-            if (sendDMsToCloseContacts) {
-                val closeContactIds = sharedPreferences.getStringSet("settings_close_contacts", null);
-                if (closeContactIds != null) {
-                    for (i in closeContactIds) {
-                        twitterService.sendDM(this, i, msg, SEND_DM)
-                    }
+            twitterService.sendTweet(this, msg, SEND_TWEET)
+        }
+        val sendDMsToCloseContacts = sharedPreferences.getBoolean("settings_enable_sending_dms_to_close_contacts", true)
+        if (sendDMsToCloseContacts) {
+            val closeContactIds = sharedPreferences.getStringSet("settings_close_contacts", null);
+            if (closeContactIds != null) {
+                for (i in closeContactIds) {
+                    twitterService.sendDM(this, i, msg, SEND_DM)
                 }
             }
         }
+
     }
 
     private fun getLocation() : Location? {
@@ -185,11 +190,39 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
     }
 
     override fun syncResponse(responseBody: String, responseCode: Int, requestCode: String) {
-        if (requestCode == SEND_TWEET) {
+        if (requestCode == GET_BROADCASTSOS_TWEETS) {
+            if (responseCode == 200) {
+                val result =
+                    Gson().fromJson(responseBody, GetTweetsResponseModel::class.java)
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                intent.putExtra(DELETE_TWEET_INTENT_PAYLOAD, result.data[0].id);
+                val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
+                val timeToUndo = sharedPreferences.getString("settings_time_to_undo_false_alarm", "60" /* 1 minute */)!!.toLong()*1000
+               //{"errors":[{"parameters":{"tweet.fields":["1547375481640521728"]},"message":"The `tweet.fields` query parameter value [1547375481640521728] is not one of [attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,non_public_metrics,organic_metrics,possibly_sensitive,promoted_metrics,public_metrics,referenced_tweets,reply_settings,source,text,withheld]"}],"title":"Invalid Request","detail":"One or more parameters to your request was invalid.","type":"https://api.twitter.com/2/problems/invalid-request"}
+
+                Log.i(TAG, "Time to undo: $timeToUndo")
+                val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle("SOS Sent!")
+                    .setContentText("Tap here to undo the SOS tweet.")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(pendingIntent)
+                    .setTimeoutAfter(timeToUndo)
+                    .setAutoCancel(true)
+                with(NotificationManagerCompat.from(this)) {
+                    notify(121, builder.build())
+                }
+            }
+        } else if (requestCode == SEND_TWEET) {
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
+            val sharedPref = this.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
             if (responseCode != 201) {
                 Log.i(TAG, "Error sending tweet: $responseBody")
-                Toast.makeText(this, "Error sending tweet", Toast.LENGTH_SHORT).show()
-                return
+                // Mostly this is due to the fact that multiple tweets with the same content are sent at the same time. Let's retrieve the last successful tweet and pass that in the following intent.
+                twitterService.getBroadcastSosTweets(this, GET_BROADCASTSOS_TWEETS)
             }
             Log.i(TAG, "Tweet sent")
             val result =
@@ -200,7 +233,6 @@ class ShakeService : Service(), SensorEventListener, TwitterViewModel {
             Log.i(TAG, "Tweet sent: ${result.data.id}")
             intent.putExtra(DELETE_TWEET_INTENT_PAYLOAD, result.data.id);
             val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this /* Activity context */)
             val timeToUndo = sharedPreferences.getString("settings_time_to_undo_false_alarm", "60" /* 1 minute */)!!.toLong()*1000
 
             Log.i(TAG, "Time to undo: $timeToUndo")

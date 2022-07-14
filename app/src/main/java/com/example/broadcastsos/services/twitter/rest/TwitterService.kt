@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.example.broadcastsos.Keys
+import com.example.broadcastsos.Keys.Companion.BEARER_TOKEN
 import kotlinx.coroutines.*
 import okhttp3.*
 import okio.Buffer
@@ -106,6 +107,40 @@ class TwitterService(private val viewModel: TwitterViewModel) : ITwitterApis {
                         Log.d("TwitterService", result.code().toString())
                         // {"detail":"You are not allowed to create a Tweet with duplicate content.","type":"about:blank","title":"Forbidden","status":403} 403
                         // {"data":{"id":"1547341606919245824","text":"test"}} 201
+                        viewModel.syncResponse(body, result.code(),  requestCode)
+                    }
+                }
+            } catch (e: CancellationException) {
+            }
+        }
+    }
+
+    override fun getBroadcastSosTweets(
+        context: Context,
+        requestCode: String
+    ) {
+        coroutineScope?.cancel()
+        coroutineScope = MainScope()
+        coroutineScope?.launch(errorHandler) {
+            try {
+                val defer = async(Dispatchers.IO) {
+                    sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+
+                    val userId = sharedPref.getString("userId", "") ?: ""
+                    val request = Request.Builder()
+                        .addHeader("Authorization", "Bearer ${BEARER_TOKEN}")
+                        .url("https://api.twitter.com/2/tweets/search/recent?query=from%3A${userId}%20has%3Ahashtags%20%22BroadcastSOS%22&sort_order=recency")
+                        .get()
+                        .build()
+
+                    Network.fetchHttpResult(request).apply {
+                    }
+                }
+                when (val result = defer.await()) {
+                    is Response -> {
+                        val body = result.body()?.string() ?: ""
+                        Log.d("TwitterService", body)
+                        Log.d("TwitterService", result.code().toString())
                         viewModel.syncResponse(body, result.code(),  requestCode)
                     }
                 }
