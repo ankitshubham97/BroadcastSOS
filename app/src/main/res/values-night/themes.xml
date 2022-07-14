@@ -2,12 +2,12 @@
     <!-- Base application theme. -->
     <style name="Theme.BroadcastSOS" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blue_1</item>
-        <item name="colorPrimaryVariant">@color/blue_2</item>
+        <item name="colorPrimary">@color/twitter_1</item>
+        <item name="colorPrimaryVariant">@color/twitter_2</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/indigo_1</item>
-        <item name="colorSecondaryVariant">@color/indigo_2</item>
+        <item name="colorSecondary">@color/twitter_1</item>
+        <item name="colorSecondaryVariant">@color/twitter_2</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>

@@ -7,9 +7,6 @@
 <!--    <color name="teal_700">#FF018786</color>-->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="indigo_1">#3e4e88</color>
-    <color name="indigo_2">#4e62ab</color>
-    <color name="blue_1">#e2f2f9</color>
-    <color name="blue_2">#b8dff0</color>
-    <color name="blue_3">#8ecce7</color>
+    <color name="twitter_1">#1DA1F2</color>
+    <color name="twitter_2">#14171A</color>
 </resources>
